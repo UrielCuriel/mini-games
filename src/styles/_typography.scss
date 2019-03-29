@@ -1,0 +1,9 @@
+@import url("https://fonts.googleapis.com/css?family=Caveat|Permanent+Marker");
+
+* {
+  font-family: "Caveat", cursive;
+}
+
+#{headings(1,6)} {
+  font-family: "Permanent Marker", cursive;
+}

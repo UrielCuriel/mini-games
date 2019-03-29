@@ -1,0 +1,80 @@
+.main {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 100px 1fr;
+    justify-items: center;
+    align-items: center;
+    .title {
+      h1 {
+        color: #e02923;
+        small {
+          color: #595957;
+        }
+      }
+    }
+    .menu {
+      display: grid;
+      justify-items: center;
+      align-items: center;
+      grid-gap: 20px;
+      grid-auto-flow: column;
+      .item {
+        width: 300px;
+        height: 150px;
+        border-color: #595957;
+        border-width: 2px;
+        border-style: solid;
+        border-radius: 25px 25px 55px 5px/5px 55px 25px 25px;
+        background-color: white;
+  
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1.5fr 0.5fr;
+        grid-template-rows: 1fr 1fr 1fr;
+        grid-template-areas: "name name" "top3 score" "top3 play";
+        justify-items: center;
+        align-items: center;
+        grid-gap: 10px;
+        padding: 10px;
+        .name {
+          grid-area: name;
+        }
+  
+        .top3 {
+          grid-area: top3;
+        }
+  
+        .score {
+          grid-area: score;
+        }
+  
+        .play {
+          grid-area: play;
+          color: white;
+          display: grid;
+          width: 100%;
+          height: 100%;
+          background-color: #e02923;
+          align-content: center;
+          border-radius: 255px 25px 225px 25px/25px 225px 25px 255px;
+          overflow: hidden;
+          height: 30px;
+          &:hover {
+            opacity: 0.6;
+          }
+          a {
+            
+            margin: 0;
+            text-align: center;
+            display: block;
+            width: 100%;
+            height: 100%;
+            color: white;
+            text-decoration: none;
+          }
+        }
+      }
+    }
+  }
+  
