@@ -12,7 +12,10 @@ import { GameService } from './game.service';
 export class GameComponent implements OnInit, AfterViewInit {
   @ViewChild('canvas') canvas: ElementRef;
   ctx: CanvasRenderingContext2D;
+  width = 0;
+  height = 0;
   constructor(public snakeService: GameService) {
+
     this.snakeService.score.subscribe(
       (score) => {
         console.log(score);
@@ -21,8 +24,10 @@ export class GameComponent implements OnInit, AfterViewInit {
     );
     this.snakeService.level.subscribe(
       (level) => {
-        console.log(level);
-
+        this.width = this.snakeService.width;
+        this.height = this.snakeService.height;
+        console.log(this.width);
+        console.log(this.height);
       }
     );
     this.snakeService.onDead().subscribe(
@@ -34,29 +39,31 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+
   }
   ngAfterViewInit() {
     // get the context
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
     this.ctx = canvasEl.getContext('2d');
-    canvasEl.height = window.innerHeight * .8;
-    canvasEl.width = window.innerWidth * .8;
 
     this.snakeService.config(this.ctx, canvasEl);
+    canvasEl.onresize = this.ngAfterViewInit;
   }
-  @HostListener('window:keyup.ArrowUp')
+  @HostListener('window:keydown.ArrowUp')
   moveUp() {
     this.snakeService.snake.up();
   }
-  @HostListener('window:keyup.ArrowDown')
+  @HostListener('window:keydown.ArrowDown')
   moveDown() {
     this.snakeService.snake.down();
   }
-  @HostListener('window:keyup.ArrowLeft')
+  @HostListener('window:keydown.ArrowLeft')
   moveLeft() {
     this.snakeService.snake.left();
   }
-  @HostListener('window:keyup.ArrowRight')
+  @HostListener('window:keydown.ArrowRight')
   moveRight() {
     this.snakeService.snake.right();
   }

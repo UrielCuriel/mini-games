@@ -1,8 +1,13 @@
 import { range, BehaviorSubject } from 'rxjs';
 
-export const random = (inicio, final) => Math.floor(Math.random() * final) + inicio;
+export const random = (inicio, final, step) => {
+    const r = Math.floor(Math.random() * final) + inicio;
+    return r % step === 0 ? r : random(inicio, final, step);
+};
 
 export const squarehit = (cuno, cdos) => cuno.x == cdos.x && cuno.y == cdos.y;
+
+export const size =(a: number, b: number) => (b === 0) ? a : size(b, a % b);
 
 export const hit = (a, b) => {
     let hit = false;
@@ -23,34 +28,58 @@ export const hit = (a, b) => {
     return hit
 }
 
-export class Food {
-    constructor(public x: number, public y: number, public width: number = 11, public height: number = 11) {
+export class Draw {
+    width: number;
+    height: number;
+
+    constructor(public ctx: CanvasRenderingContext2D) {
+        this.getSize();
+
+    }
+    getSize() {
+        const _size = size(this.ctx.canvas.offsetWidth, this.ctx.canvas.offsetHeight);
+        this.width = _size;
+        this.height = _size;
     }
 
-    static generate(canvasW, canvasH) {
-        return new Food(random(0, canvasW), random(0, canvasH));
+}
+
+export class Food extends Draw {
+    constructor(public x: number, public y: number, public ctx: CanvasRenderingContext2D) {
+        super(ctx);
     }
 
-    draw(ctx, imgFood) {
-        ctx.drawImage(imgFood, this.x, this.y, this.width, this.height)
+    static generate(ctx: CanvasRenderingContext2D, size) {
+        return new Food(random(0, ctx.canvas.width - size, size), random(0, ctx.canvas.height - size, size), ctx);
+    }
+
+    draw(imgFood) {
+        this.getSize();
+        this.ctx.drawImage(imgFood, this.x, this.y, this.width, this.height)
     }
 }
 
-export class Square {
-    constructor(public x: number, public y: number, public width: number = 11, public height: number = 11, public back: Square = null) {
+export class Square extends Draw {
+    constructor(
+        public x: number,
+        public y: number,
+        public ctx: CanvasRenderingContext2D,
+        public back: Square = null,
+    ) {
+        super(ctx);
     }
 
-    draw(ctx, imgSquare) {
-
-        ctx.drawImage(imgSquare, this.x, this.y, this.width, this.height)
+    draw(imgSquare) {
+        this.getSize();
+        this.ctx.drawImage(imgSquare, this.x, this.y, this.width, this.height)
         if (this.hasBack()) {
-            this.back.draw(ctx, imgSquare)
+            this.back.draw(imgSquare)
         }
     }
     add() {
         if (this.hasBack()) return this.back.add();
 
-        this.back = new Square(this.x, this.y)
+        this.back = new Square(this.x, this.y, this.ctx)
     }
     hasBack() {
         return this.back !== null;
@@ -100,19 +129,18 @@ export class Snake {
     _eating: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     head: Square;
     direction: 'left' | 'right' | 'up' | 'down';
-    constructor(ctx, imgSqiare, size = 4) {
-        console.log(ctx);
-        this.head = new Square(100, 0)
-        this.draw(ctx, imgSqiare);
+    constructor(public ctx: CanvasRenderingContext2D, imgSquare, size = 4) {
+        this.head = new Square(100, 0, this.ctx);
+        this.draw(imgSquare);
         this.direction = 'right'
         range(1, size).forEach(() => {
-            this.head.add()
+            this.head.add();
         })
     }
-    draw(ctx, imgSquare) {
+    draw(imgSquare) {
 
 
-        this.head.draw(ctx, imgSquare)
+        this.head.draw(imgSquare)
     }
     left() {
         if (this.direction == 'right') return false
